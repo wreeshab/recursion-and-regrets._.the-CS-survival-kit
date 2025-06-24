@@ -1,0 +1,1 @@
+in dp on string, lets say the current state depends on the prev char, ans there are only limited chars like 3 or 4, the close your eyes and transpile them into numbers and  proceed , else die refactoring the code during memoizations. 
