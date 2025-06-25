@@ -1735,3 +1735,413 @@ A critical section is the part of a process that **must not be concurrently exec
 | No hardware support needed for context switching.                   | Requires hardware support for context switching.                        |
 | If one thread blocks, the **entire process** is blocked.            | If one thread blocks, **other threads** in the process can continue. ofccourse there are effects from that block but these other threads wont be blocked completely.    |
 | User-level threads are **dependent** on each other.                 | Kernel-level threads are **independent** of each other.                 |
+
+
+### Q: What Is the Difference Between Concurrency and Parallelism?
+
+---
+
+### **Concurrency**
+- Concurrency means **handling multiple tasks at the same time**, but **not necessarily executing them simultaneously**.
+- The system **interleaves** execution—quickly switching between tasks.
+- Can be achieved even on a **single-core processor**.
+- Emphasis is on **task management** and **correctness**.
+- Example: A user interface remains responsive while loading data in the background.
+
+---
+
+### **Parallelism**
+- Parallelism means **executing multiple tasks simultaneously**, typically using **multiple processors or cores**.
+- All tasks truly **run at the same time**.
+- Requires hardware support such as **multi-core CPUs**.
+- Emphasis is on **improving performance** and **reducing execution time**.
+- Example: Image processing tasks running on multiple cores in parallel.
+
+---
+
+> **Note**: Parallelism is a subset of concurrency. All parallel programs are concurrent, but not all concurrent programs are parallel.
+
+
+### Q: What Are the Advantages of Multithreading?
+
+---
+
+- **Better Performance**  
+  Multiple threads can run different parts of a task at the same time, making programs faster and more efficient.
+
+- **Parallel Processing**  
+  On multi-core systems, threads can run truly in parallel, improving speed for heavy tasks.
+
+- **More Responsive Applications**  
+  Threads allow apps to stay active and smooth, even when doing background work like loading files or fetching data.
+
+- **Improved Server Handling**  
+  Servers can handle many users at once using threads, without one slow request blocking others.
+
+- **Uses Fewer Resources**  
+  Threads use less memory and system overhead than creating full processes.
+
+- **Simpler Code Structure**  
+  Programs can be broken into smaller thread-based parts, which are easier to write and understand.
+
+- **Faster Communication**  
+  Threads share the same memory, so they can exchange data quickly without needing complex methods.
+
+---
+
+**Summary**:  
+Multithreading helps make software faster, smoother, and more scalable—especially on modern multi-core systems.
+
+
+### Q: What Is the Difference Between Multithreading and Multitasking?
+
+---
+
+| **Multithreading**                                                  | **Multitasking**                                                   |
+|----------------------------------------------------------------------|----------------------------------------------------------------------|
+| Multiple threads run at the same time within a **single program**.   | Several **independent programs/processes** run concurrently.         |
+| CPU switches between **threads**.                                    | CPU switches between **tasks/processes**.                            |
+| Threads are **lightweight** parts of a process.                      | Processes are **heavyweight** and have their own memory space.       |
+| Feature provided by the **process**.                                 | Feature provided by the **Operating System**.                        |
+| Shares computing resources among **threads of the same process**.    | Shares computing resources among **different processes**.            |
+
+---
+
+**Summary**:  
+Multithreading allows multiple tasks **within a single process**, while multitasking handles **multiple independent processes** at once.
+
+### Q: What Are the Drawbacks of Semaphores?
+
+Semaphores are widely used for synchronization in operating systems and multithreaded applications, but they come with several drawbacks:
+
+---
+
+- **Complexity in Implementation**  
+  Semaphores can be tricky to use correctly. Misuse (like missing a `signal()` or extra `wait()`) can easily lead to synchronization problems.
+
+- **Deadlocks**  
+  If multiple processes wait for resources held by each other (via semaphores), it can result in a deadlock. Once in a deadlock, no process can proceed.
+
+- **Priority Inversion**  
+  A lower-priority process holding a semaphore can block higher-priority processes waiting for it. This can degrade performance or lead to missed deadlines.
+
+- **Busy Waiting (Spinlocks)**  
+  Binary semaphores may lead to busy waiting where the CPU is consumed in a loop, checking for the semaphore, wasting valuable resources.
+
+- **Difficult to Debug and Maintain**  
+  Semaphore-based programs can be hard to test or debug due to non-deterministic behavior. Bugs may not appear consistently and can be difficult to reproduce.
+
+- **Lack of Ownership**  
+  Semaphores do not enforce ownership. Any thread can `signal()` or `wait()` on a semaphore, even if it didn’t acquire it. This can lead to logic errors.
+
+- **Not Scalable for Complex Systems**  
+  In large systems with many threads or processes, managing synchronization using semaphores alone becomes unscalable and error-prone.
+
+---
+
+**Summary**:  
+While semaphores are powerful, they must be used with care. Poor implementation can lead to deadlocks, performance issues, and bugs that are difficult to detect and fix.
+
+### Q: What Is Peterson's Approach?
+
+**Peterson’s algorithm** is a classic software-based solution for **mutual exclusion** between **two processes** competing for a **critical section**. It guarantees that only one process enters the critical section at a time without requiring any hardware support.
+
+---
+
+### Key Concepts:
+- Solves the **critical section problem** for two processes (`P0` and `P1`).
+- Uses two shared variables:
+  - `flag[2]`: Indicates if a process wants to enter the critical section.
+  - `turn`: Indicates whose turn it is to enter.
+
+---
+
+### Algorithm Steps for Process `P0`:
+
+```cpp
+// Shared variables
+bool flag[2] = {false, false};
+int turn;
+
+void P0() {
+    flag[0] = true;         // P0 wants to enter
+    turn = 1;               // Let P1 go first if it wants
+    while (flag[1] && turn == 1); // Wait while P1 wants in and it's P1's turn
+
+    // Critical Section
+    // ...
+
+    flag[0] = false;        // Exit section
+}
+```
+### Guarantees:
+- **Mutual Exclusion**: Only one process enters CS.
+- **Progress**: A process not interested won’t block the other.
+- **Bounded Waiting**: No process waits indefinitely.
+
+
+### Q: What Is Bounded Waiting?
+
+**Bounded waiting** ensures that any process trying to enter the critical section will be allowed to do so **within a finite number of attempts**, avoiding indefinite postponement or starvation.
+
+### Q: What Are the Solutions to the Critical Section Problem?
+
+Solutions to the critical section problem are categorized into **software**, **hardware**, and **synchronization primitives**:
+
+---
+
+### 1. **Software-Based Solutions**
+These are implemented using logic and shared variables, without hardware assistance.
+
+- **Peterson’s Algorithm**: Ensures mutual exclusion for two processes using turn and flag variables.
+- **Bakery Algorithm**: Assigns numbered tickets to each process to decide entry order into the critical section.
+- **Dekker’s Algorithm**: Oldest known algorithm using busy-wait and turn variables to alternate access.
+- **Lamport’s Algorithm**: Uses a timestamp-based approach to enforce critical section ordering.
+
+---
+
+### 2. **Hardware-Based Solutions**
+These rely on atomic operations or CPU instructions for mutual exclusion.
+
+- **Disable Interrupts**: Temporarily turns off interrupts to prevent context switches.
+- **Test-and-Set**: Atomically tests and sets a lock variable to control access.
+- **Compare-and-Swap (CAS)**: Compares memory content with a value and swaps if matched — often used in lock-free structures.
+- **Exchange Instruction**: Atomically swaps the contents of a register and memory location.
+
+---
+
+### 3. **Synchronization Tools (OS or Library Provided)**
+Built using software/hardware and provided for ease of synchronization.
+
+- **Semaphores**: Integer-based mechanism with atomic `wait()` and `signal()` operations to control access.
+- **Mutex Locks**: Allows only one thread at a time into the critical section using lock/unlock operations.
+- **Monitors**: High-level abstraction with built-in mutual exclusion and condition synchronization.
+
+---
+
+**Summary**:  
+Different approaches provide trade-offs in performance, ease of implementation, and suitability across systems.
+
+
+### Q: What Is Banker's Algorithm?
+
+**Banker's Algorithm** is a deadlock-avoidance algorithm used in operating systems to safely allocate resources to processes without entering a deadlocked state.
+
+---
+
+### Key Concepts:
+- Each process declares its **maximum resource requirement** in advance.
+- The OS allocates resources only if it leads to a **safe state**, meaning all processes can still complete eventually.
+
+---
+
+### Steps:
+1. Before granting a request, the OS checks:
+   - Is the request ≤ Need?
+   - Is the request ≤ Available?
+2. It then **simulates** allocation and checks if the system remains in a **safe state**.
+3. If safe, allocation proceeds; else, the process waits.
+
+---
+
+### Data Structures:
+- `Available[]`: Resources currently available.
+- `Max[][]`: Maximum demand of each process.
+- `Allocation[][]`: Resources currently allocated.
+- `Need[][] = Max - Allocation`: Remaining resource need.
+
+---
+
+### Summary:
+Banker’s algorithm prevents deadlock by ensuring the system only proceeds with allocations that leave it in a state where all processes can still be safely completed.
+
+### Q: What Are the Drawbacks of Concurrency?
+
+- **Isolation Overhead**: Requires protection between concurrently running applications to avoid interference.
+- **Coordination Complexity**: Needs extra mechanisms like synchronization, which complicate program design.
+- **Performance Overhead**: Context switching, synchronization, and resource sharing can reduce overall efficiency.
+- **Scalability Limitations**: Running too many applications or threads may degrade performance instead of improving it.
+
+**Summary**:  
+While concurrency improves resource utilization, it introduces complexity, overhead, and potential performance issues when not managed properly.
+
+
+### Q: What Are the Necessary Conditions for Deadlock?
+
+A **deadlock** occurs when a group of processes are each waiting for resources held by others, and none can proceed. For a deadlock to happen, **all four conditions must hold simultaneously**:
+
+---
+
+1. **Mutual Exclusion**  
+   At least one resource must be held in a non-shareable mode; only one process can use it at a time.
+
+2. **Hold and Wait**  
+   A process holding at least one resource is waiting to acquire additional resources held by other processes.
+
+3. **No Preemption**  
+   Resources cannot be forcibly taken from a process; they must be released voluntarily.
+
+4. **Circular Wait**  
+   A set of processes exists such that each process is waiting for a resource held by the next in the chain, forming a cycle.
+
+---
+
+**Summary**:  
+Deadlock arises only when **all four** conditions hold. Preventing or breaking any one of them can avoid deadlock.
+
+### Q: What Are the Issues Related to Concurrency?
+
+Concurrency introduces several challenges in the design and execution of programs due to multiple processes or threads executing simultaneously. Key issues include:
+
+---
+
+1. **Non-Atomic Operations**  
+   Operations that are not executed as a single, indivisible step can be interrupted, leading to inconsistent states.
+
+2. **Race Conditions**  
+   Occurs when multiple processes access shared data and the outcome depends on the timing of their execution.
+
+3. **Blocking**  
+   A process may get stuck waiting indefinitely for a resource, input, or signal, reducing system responsiveness.
+
+4. **Starvation**  
+   A process waits indefinitely because higher-priority processes continuously preempt required resources.
+
+5. **Deadlock**  
+   Two or more processes are waiting on each other to release resources, and none can proceed.
+
+6. **Priority Inversion**  
+   A lower-priority process holds a resource needed by a higher-priority one, leading to inefficient scheduling.
+
+7. **Livelock**  
+   Processes continuously change their state in response to each other without making any actual progress.
+
+8. **Data Inconsistency**  
+   Without proper synchronization, concurrent updates to shared data can lead to corrupt or incorrect results.
+
+---
+
+**Summary**:  
+Concurrency must be carefully managed using synchronization techniques to avoid critical issues like deadlock, starvation, and data corruption.
+
+### Q: What Is Livelock?
+
+**Livelock** is a concurrency issue where processes continuously change their states in response to each other, but **no progress is made**.
+
+---
+
+### Characteristics:
+- Unlike deadlock (where processes are stuck), in livelock, processes **remain active**.
+- They repeatedly **retry operations** or **yield control**, but **never enter the critical section or complete their tasks**.
+
+---
+
+### Example:
+Two processes repeatedly yield the CPU to avoid conflict, but both keep doing so infinitely — thus neither makes progress.
+
+### Q: Why Do We Use Precedence Graphs (not so important, not a big deal , study once.)?
+
+A **precedence graph** (also called a serializability graph) is used in concurrency control to represent the **execution order and dependencies** among transactions or processes.
+
+---
+
+### Key Uses:
+- **Visualizes execution order** of instructions/statements/processes.
+- **Detects conflicts or cycles** that may lead to inconsistent execution.
+- **Helps determine serializability** in database transactions.
+- **Ensures safe scheduling** by verifying acyclic dependencies.
+
+---
+
+### Properties:
+- Nodes represent individual instructions or operations.
+- Directed edges represent **"must happen before"** relationships.
+- A **cycle in the graph** indicates **potential conflict or non-serializable execution**.
+
+---
+
+**Summary**:  
+Precedence graphs help ensure correct execution order and identify unsafe or conflicting dependencies between operations or transactions.
+
+
+### Q: What Is a Resource Allocation Graph (RAG)?
+
+A **Resource Allocation Graph (RAG)** is a directed graph used by operating systems to model how **resources are allocated to processes** and to detect potential **deadlocks**.
+
+---
+
+### Components:
+- **Processes**: Represented as **circles (P1, P2, ...)**.
+- **Resources**: Represented as **squares (R1, R2, ...)**.
+- **Edges**:
+  - **Request edge (P → R)**: A process is requesting a resource.
+  - **Assignment edge (R → P)**: A resource is assigned to a process.
+
+---
+
+### Uses:
+- Helps **visualize current allocations** and pending requests.
+- Detects **circular wait** (a necessary condition for deadlock).
+- A **cycle** in the RAG:
+  - **With single instances** of resources → indicates deadlock.
+  - **With multiple instances** → may or may not indicate deadlock.
+
+---
+
+**Summary**:  
+RAGs are vital tools for detecting and analyzing **deadlocks** and managing **safe resource allocation** in multiprogramming systems.
+
+
+### Q: What Is a Deadlock?
+
+A **deadlock** is a state in which a group of processes are **permanently blocked**, each waiting for a resource held by another, and none can proceed.
+
+
+### Q: What Is the Goal and Functionality of Memory Management? (IMPORTANT)
+
+The primary goal of **memory management** is to efficiently allocate and manage memory resources to processes, ensuring system stability and performance.
+
+---
+
+### Core Functionalities:
+
+- **Relocation**  
+  Adjusts process addresses dynamically as processes move in memory.
+
+- **Protection**  
+  Ensures that one process cannot access the memory of another process.
+
+- **Sharing**  
+  Allows multiple processes to share common data or code safely.
+
+- **Logical Organization**  
+  Divides memory into logical segments (e.g., code, stack, data) for modularity and ease of access.
+
+- **Physical Organization**  
+  Manages the mapping between logical memory and physical memory hardware.
+
+---
+
+**Summary**:  
+Memory management ensures safe, efficient, and organized use of memory in a multiprogramming environment.
+
+### Q: What Is the Difference Between Physical Address and Logical Address?
+
+---
+
+| **Parameter**            | **Logical Address**                                         | **Physical Address**                                        |
+|--------------------------|-------------------------------------------------------------|-------------------------------------------------------------|
+| **Definition**           | Address generated by the **CPU** during program execution   | Actual address in **main memory (RAM)**                    |
+| **Visibility**           | Seen by **user/programmer**                                 | **Not visible** to user, handled by the OS and hardware     |
+| **Generated By**         | **CPU** via the program's instructions                      | **Memory Management Unit (MMU)** after address translation |
+| **Usage**                | Used for **accessing virtual memory**                       | Used for **accessing physical RAM**                        |
+| **Changeable?**          | Yes, based on memory allocation and mapping                 | Fixed once assigned by OS                                  |
+| **Translation Needed?**  | Yes, translated to physical address using **MMU & page table** | No translation; it's the actual address                    |
+|access|Access	The user uses the logical address to access the physical address.|	The user can not directly access the physical address|
+
+---
+
+**Summary**:  
+The **logical address** is the address a process uses, while the **physical address** is where the data actually resides in memory. The OS and MMU handle the translation between them to enable virtual memory and process isolation.
+
+continue from 78th question
