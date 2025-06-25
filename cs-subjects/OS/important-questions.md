@@ -1345,4 +1345,393 @@ Apart from the **monolithic kernel**, two widely used kernel architectures are:
 **Example**: Windows NT, modern macOS
 
 
-continue from 48.
+### Q: Why Use Processes When We Have Threads — and Vice Versa?
+
+Though **processes and threads** both represent execution units, they serve **different purposes** and are **not interchangeable**.
+
+---
+
+### Why Use **Processes** When We Have Threads?
+
+- **Isolation & Fault Tolerance**: Each process has **its own memory space**. A crash in one process **does not affect others**.
+- **Security**: Processes **don’t share memory by default**, making them more secure in multi-user or untrusted environments.
+- **Multiprogramming**: Ideal for **independent tasks** that don’t need to share data frequently (e.g., running a browser and a music player).
+- **Resource Management**: OS allocates resources per process — better for large, resource-intensive applications.
+
+---
+
+### Why Use **Threads** When We Have Processes?
+
+- **Lightweight**: Threads within the same process **share memory and resources**, reducing overhead.
+- **Faster Communication**: Inter-thread communication is faster than inter-process (no IPC needed).
+- **Parallelism**: Ideal for **concurrent tasks** within the same application (e.g., UI thread, network thread).
+- **Responsiveness**: Threads allow background operations **without freezing the main program** (e.g., loading in UI apps).
+
+---
+
+### Summary
+
+| Use Case                  | Choose Process                          | Choose Thread                                |
+|---------------------------|------------------------------------------|----------------------------------------------|
+| Isolation & stability     | Independent, fault-tolerant tasks        | Tasks in same app that must work together     |
+| Performance needs         | Higher isolation, less shared data       | High concurrency, shared data                |
+| Communication complexity  | Can tolerate IPC overhead                | Needs fast data sharing                      |
+| Crash containment         | Critical – one crash shouldn't spread    | Less critical – shared crash risk acceptable |
+
+Processes and threads **complement each other** — use **processes for isolation**, and **threads for parallelism within a task**.
+
+### Q: What is Context Switching in Operating Systems?
+
+**Context switching** is the process by which the **CPU switches from one process or thread to another**, enabling **multitasking** on a single processor system. It involves **saving the current process’s state** and **loading the next process’s state** using the **Process Control Block (PCB)**.
+
+---
+
+### 🔁 Why It’s Needed
+- To **share CPU time** among multiple processes or threads.
+- Allows paused processes to **resume exactly where they left off**.
+- Enables **fair CPU scheduling** and system responsiveness.
+
+---
+
+### ⚙️ How Context Switching Works (Step-by-Step)
+
+1. **Interrupt or scheduling event** occurs (e.g., time slice ends, I/O interrupt).
+2. The OS **saves the current process's context** into its PCB:
+   - Program Counter (PC)
+   - CPU registers
+   - Process state
+   - Memory management info
+   - Open files and I/O status
+3. The OS **selects the next process** from the ready queue.
+4. The **new process’s context** is loaded from its PCB.
+5. CPU **resumes execution** of the new process.
+
+---
+
+### 📦 What is Stored in a PCB?
+
+The **Process Control Block (PCB)** contains all essential info to resume a process:
+
+- **Process ID (PID)**
+- **Program Counter** (location of next instruction)
+- **CPU registers**
+- **Process state** (Ready, Running, Waiting)
+- **Memory mapping info**
+- **I/O status info**
+- **Scheduling information**
+- **Accounting info** (CPU time used, priority, etc.)
+
+---
+
+### 🧠 Context Switch Triggers
+
+- **Interrupts** (hardware or I/O)
+- **Multitasking events** (e.g., time slice expiration)
+- **User ↔ Kernel mode transitions**
+
+---
+
+### ⏱️ Performance Notes
+
+- **Context switching is overhead** — no actual computation is done during the switch.
+- **Performance depends on hardware**:
+  - Fast memory, fewer registers = quicker switch.
+  - Some CPUs (e.g., UltraSPARC) support multiple register sets for faster switching.
+
+---
+
+### ✅ Summary
+
+Context switching enables **efficient multitasking** by saving/restoring process state via the PCB. Though it introduces some overhead, it is essential for running multiple applications **concurrently** on a single CPU.
+
+
+### Q: Difference Between Operating System and Kernel
+
+| Aspect                    | Operating System                                     | Kernel                                                  |
+|---------------------------|------------------------------------------------------|----------------------------------------------------------|
+| Definition                | System software that manages hardware and software. | Core part of OS managing communication with hardware.    |
+| Role                      | Interface between **user** and hardware.             | Interface between **applications** and hardware.         |
+| Responsibilities          | Provides GUI/CLI, manages processes, files, memory. | Manages CPU, memory, I/O, device drivers, system calls.  |
+| Dependency                | Includes the kernel as a component.                  | Kernel alone can't function as a full OS.                |
+| Types                     | Single-user, Multi-user, RTOS, Distributed, etc.     | Monolithic, Microkernel, Hybrid, Exokernel.              |
+| User Interaction          | Provides user interfaces (shell, GUI).               | No direct interaction with users.                        |
+
+**Summary**:  
+The **Operating System** is a complete software managing all computer resources and user interaction, while the **Kernel** is the core engine that directly manages hardware and critical low-level tasks.
+
+### Q: What is a PCB (Process Control Block)?
+
+A **Process Control Block (PCB)** is a **data structure maintained by the operating system** that contains all essential information about a particular process.
+
+It acts as the **identity and record** of a process while it's managed by the OS.
+
+---
+
+### Contents of PCB:
+
+- **Process ID (PID)** – Unique identifier.
+- **Process State** – Ready, Running, Waiting, etc.
+- **Program Counter** – Address of next instruction.
+- **CPU Registers** – To resume execution.
+- **Memory Management Info** – Base/limit registers, page tables.
+- **I/O Status Info** – Devices allocated, open files.
+- **Scheduling Info** – Priority, time slice, queue pointers.
+- **Accounting Info** – CPU time used, process creation time.
+
+---
+
+**Summary**:  
+The PCB stores **all necessary context** to pause and resume a process, and it's crucial for **context switching**, **scheduling**, and **process management**.
+
+### Q: When Is a System Said to Be in a Safe State?
+
+A system is said to be in a **safe state** if it is **possible to allocate resources** to all processes in some order **without leading to a deadlock**.
+
+---
+
+### Conditions for Safe State:
+- There exists at least **one sequence** of process execution where **each process can finish** with the available resources.
+- Even if all processes demand their **maximum resources**, the system can still avoid deadlock **by careful scheduling**.
+
+### Q: What is Cycle Stealing?
+
+**Cycle stealing** is a technique used by **Direct Memory Access (DMA)** systems to transfer data between memory and I/O devices by temporarily **pausing or delaying the CPU** during a memory cycle, allowing the DMA controller to **"steal" one bus cycle**.
+
+---
+
+### Why It's Needed:
+- When large data transfers are needed (e.g., from a disk to memory), using the CPU for every byte would be inefficient.
+- **DMA** offloads this work, but it needs access to memory.
+- Instead of fully stopping the CPU (as in burst mode), it "steals" one memory cycle at a time.
+
+---
+
+### How It Works:
+1. DMA controller requests access to system memory.
+2. CPU is paused for **one cycle** (a few nanoseconds).
+3. DMA transfers a word of data.
+4. CPU resumes execution.
+
+This happens **repeatedly in the background**, giving the illusion of parallel CPU and I/O operation.
+
+---
+
+### Characteristics:
+- CPU slowdown is **minimal**.
+- Data transfer is **faster** than CPU-mediated transfer.
+- Often used in real-time or high-throughput systems (e.g., audio/video streaming).
+
+---
+
+### Comparison with Other DMA Modes:
+| Mode         | CPU Halted?      | Use Case                  |
+|--------------|------------------|---------------------------|
+| Burst Mode   | Yes (completely) | Fast block transfers      |
+| Cycle Stealing | No (just delayed) | Balanced CPU + I/O sharing |
+| Transparent  | No               | Only uses idle CPU cycles |
+
+---
+
+**Summary**:  
+Cycle stealing allows DMA to **access memory efficiently** by **momentarily pausing the CPU** during data transfers, enabling smooth I/O without fully halting CPU activity.
+
+### Q: What Are the DMA Data Transfer Techniques?
+
+DMA (Direct Memory Access) can transfer data using several techniques depending on how much control the CPU gives up and how I/O and memory buses are shared:
+
+---
+
+### 1. **Burst Mode (Block Transfer Mode)**
+- DMA gains **full control of the system bus** until the entire block of data is transferred.
+- CPU is **completely halted** during transfer.
+- **Fastest** transfer method but causes longer CPU delays.
+
+---
+
+### 2. **Cycle Stealing Mode**
+- DMA **steals one bus cycle** at a time from the CPU to transfer a single word.
+- CPU is only **temporarily paused** (minimal slowdown).
+- Good for real-time systems needing a balance between CPU and I/O.
+
+---
+
+### 3. **Transparent Mode (Idle Cycle DMA)**
+- DMA transfers data **only when the CPU is idle** (not using the bus).
+- **No interruption** to the CPU at all.
+- **Slowest** mode but causes **zero performance impact** on the CPU.
+
+---
+
+### Comparison Table:
+
+| Mode             | CPU Impact       | Speed     | Use Case                          |
+|------------------|------------------|-----------|-----------------------------------|
+| Burst Mode       | High (halted)    | Fast      | Bulk transfers, non-time-critical CPU |
+| Cycle Stealing   | Moderate (delays)| Balanced  | Mixed workloads, real-time audio/video |
+| Transparent Mode | None             | Slow      | Low-priority transfers without CPU interference |
+
+---
+
+**Summary**:  
+DMA supports **burst**, **cycle stealing**, and **transparent** modes to manage the trade-off between **data transfer speed** and **CPU availability**, making it suitable for a wide range of system needs.
+
+### Q: What Are a Trap and a Trapdoor?
+
+---
+
+### **Trap (Software Interrupt)**  
+A **trap** is a **software-generated interrupt**, usually caused by a program encountering an **error condition** (e.g., divide-by-zero, invalid memory access), or by making an **explicit system call**.
+
+- It is a **synchronous** and often **non-maskable interrupt** (cannot be ignored).
+- Has **high priority**, ensuring immediate attention by the OS.
+- Transfers control to the **trap handler** in the OS.
+- Used for both **error handling** and **controlled transitions** to kernel mode (e.g., syscall).
+
+---
+
+### **Trapdoor (Backdoor)**  
+A **trapdoor** is a **secret, undocumented entry point** into a system or application that **bypasses normal authentication or access control mechanisms**.
+
+- Often introduced by developers for **debugging or maintenance**.
+- If left exposed or exploited, it becomes a **serious security vulnerability**.
+- Not part of standard OS functionality; related more to **software/system security**.
+
+---
+
+### Summary:
+- A **trap** is a legitimate OS feature to handle exceptions or service requests, with high priority and non-maskable nature.
+- A **trapdoor** is an intentional hidden access mechanism that can compromise system security if misused.
+
+
+### Q: Difference Between Program and Process
+
+| Program                                                                 | Process                                                               |
+|-------------------------------------------------------------------------|------------------------------------------------------------------------|
+| Program contains a set of instructions designed to complete a specific task. | Process is an instance of an executing program.                         |
+| Program is a passive entity as it resides in the secondary memory.     | Process is an active entity as it is created during execution and loaded into the main memory. |
+| The program exists in a single place and continues to exist until it is deleted. | Process exists for a limited span of time as it gets terminated after the completion of a task. |
+| A program is a static entity.                                           | The process is a dynamic entity.                                       |
+| Program does not have any resource requirement, it only requires memory space for storing the instructions. | Process has a high resource requirement, it needs resources like CPU, memory address, and I/O during its lifetime. |
+| The program does not have any control block.                           | The process has its own control block called Process Control Block.    |
+
+
+### Q: What is a Dispatcher in Operating Systems?
+
+A **dispatcher** is a component of the operating system that is responsible for **giving CPU control to the process** selected by the **short-term scheduler**.
+
+---
+
+### Key Responsibilities of a Dispatcher:
+
+1. **Context Switching**  
+   - Saves the state of the current process and loads the state of the next process.
+
+2. **Switching to User Mode**  
+   - Changes the CPU from kernel mode to user mode before process execution begins.
+
+3. **Jumping to the Program’s Starting Point**  
+   - Transfers control to the **instruction address** where the next process is to resume.
+
+4. **Maintaining CPU Protection**  
+   - Ensures the process cannot access privileged instructions.
+
+5. **Minimizing Dispatch Latency**  
+   - Dispatch latency is the time it takes for the dispatcher to stop one process and start another. Lower latency means more responsive multitasking.
+
+---
+
+### Summary:
+The dispatcher is a **critical part of CPU scheduling**, enabling smooth transitions between processes by handling **context saving**, **mode switching**, and **program control transfer**.
+
+### Q: What is Dispatch Latency?
+
+**Dispatch latency** is the **time taken by the dispatcher** to stop one process and **start/resume execution** of another.
+
+---
+
+### It includes:
+- **Saving the context** of the currently running process.
+- **Loading the context** of the next scheduled process.
+- **Switching to user mode**.
+- **Jumping to the instruction** where the process should resume.
+
+---
+
+### Importance:
+- Lower dispatch latency results in **faster context switches** and better system **responsiveness**.
+- Critical in **real-time systems** where timing is strict.
+
+---
+
+**Summary**:  
+Dispatch latency is the **overhead time** the OS takes to switch from one process to another during scheduling.
+
+### Q: What Are the Goals of CPU Scheduling?
+
+
+
+- **Max CPU Utilization**  
+  Keep the CPU as **busy as possible** to avoid idle time.
+
+- **Fair Allocation of CPU**  
+  Ensure all processes get a **fair chance** at CPU time, avoiding starvation.
+
+- **Max Throughput**  
+  Maximize the number of processes that **complete execution per unit time**.
+
+- **Min Turnaround Time**  
+  Reduce the total time taken from **submission to completion** of a process.
+
+- **Min Waiting Time**  
+  Minimize the time a process **spends in the ready queue** waiting for CPU.
+
+- **Min Response Time**  
+  Minimize the time between **request submission** and the **first response**.
+
+---
+
+### Q: What is a Critical Section?
+
+A **critical section** is a segment of code in a process where it **accesses shared resources** (like variables, files, or devices), and **only one process** should execute it at a time to **prevent data inconsistency** or **race conditions**.
+
+---
+
+### Key Characteristics:
+- Exists in **cooperating processes**.
+- Must be **mutually exclusive**—only one process in the critical section at a time.
+- Requires **synchronization mechanisms** (e.g., semaphores, mutexes) to enforce safe access.
+
+---
+
+### Critical Section Problem:
+The challenge is to design a protocol that satisfies:
+1. **Mutual Exclusion** – No two processes can be in the critical section at the same time.
+2. **Progress** – A decision on who enters next must not be postponed indefinitely.
+3. **Bounded Waiting** – Each process should get a fair chance after a finite number of attempts.
+
+---
+
+**Summary**:  
+A critical section is the part of a process that **must not be concurrently executed** with others to ensure **safe access to shared resources**.
+
+### Q: What Are the Synchronization Techniques?
+
+- **Mutexes** – Ensure mutual exclusion by allowing only one thread to access a critical section at a time.
+
+- **Condition Variables** – Used for blocking a thread until a particular condition is met.
+
+- **Semaphores** – Signaling mechanism that controls access based on counters.
+
+- **File Locks** – Restrict access to files or file regions to prevent concurrent write/read issues.
+
+### Q: Difference Between User-Level Thread and Kernel-Level Thread
+
+| User-Level Thread                                                   | Kernel-Level Thread                                                     |
+|---------------------------------------------------------------------|-------------------------------------------------------------------------|
+| User threads are implemented by users.                              | Kernel threads are implemented by the OS.                               |
+| OS doesn’t recognize user-level threads.                            | Kernel threads are recognized and managed by the OS.                    |
+| Implementation is easy and portable.                                | Implementation is complex and OS-dependent.                             |
+| Context switch time is low.                                         | Context switch time is high.                                            |
+| No hardware support needed for context switching.                   | Requires hardware support for context switching.                        |
+| If one thread blocks, the **entire process** is blocked.            | If one thread blocks, **other threads** in the process can continue. ofccourse there are effects from that block but these other threads wont be blocked completely.    |
+| User-level threads are **dependent** on each other.                 | Kernel-level threads are **independent** of each other.                 |
