@@ -2144,4 +2144,66 @@ Memory management ensures safe, efficient, and organized use of memory in a mult
 **Summary**:  
 The **logical address** is the address a process uses, while the **physical address** is where the data actually resides in memory. The OS and MMU handle the translation between them to enable virtual memory and process isolation.
 
-continue from 78th question
+
+
+
+### Q: What Is Address Binding?
+
+**Address binding** is the process of **mapping logical (virtual) addresses** to **physical memory addresses** so that a program can be executed.
+The Association of program instruction and data to the actual physical memory locations is called Address Binding.
+
+### Q: What Is Address Binding? (Interview-Focused Answer)
+
+**Address Binding** is the process of **mapping logical addresses to physical addresses** during program execution. It ensures that a program’s instructions and data can be correctly placed and accessed in memory.
+
+---
+
+### Types of Address Binding
+
+#### 1. **Compile-Time Binding**
+- Performed by the **compiler**.
+- Physical addresses are **hardcoded** at compile time.
+- Works **only if memory location is known and fixed**.
+- **No flexibility** — must be loaded at the same location every time.
+- Used in **embedded systems** with limited memory management.
+- **Fast** since no runtime mapping is needed.
+
+#### 2. **Load-Time Binding**
+- Performed by the **loader**.
+- Addresses are assigned when the program is **loaded into memory**.
+- Allows the program to be **relocated** to different memory areas.
+- Adds **some overhead** during loading.
+- Used in **modern operating systems** with dynamic memory allocation.
+
+#### 3. **Execution-Time (Run-Time) Binding**
+- The program uses logical (virtual) addresses.
+- Performed by the **CPU with help of MMU (Memory Management Unit)**.
+- Logical addresses are mapped to physical addresses **dynamically** during execution.
+- Provides **maximum flexibility** — programs can be loaded anywhere.
+- **Supports virtual memory** and **demand paging**.
+- Most **modern OS** use this method.
+
+---
+
+### Summary Table
+
+| Feature                     | Compile-Time        | Load-Time         | Execution-Time      |
+|----------------------------|---------------------|--------------------|----------------------|
+| Performed By               | Compiler            | Loader             | CPU / MMU            |
+| When Binding Happens       | During Compilation  | During Loading     | During Execution     |
+| Address Flexibility        | Rigid (Fixed)       | Moderate (Relocatable) | High (Dynamic)     |
+| Speed                      | Fastest             | Moderate           | Slowest (due to runtime translation) |
+| Used In                    | Embedded Systems    | Simple OS          | Most Modern OS       |
+| Supports Virtual Memory    | No                  | No                 | Yes                  |
+
+---
+
+### Real-World Analogy
+- **Compile-Time**: Like fixing classroom seats with names beforehand.
+- **Load-Time**: Seats assigned when students enter.
+- **Execution-Time**: Students can sit anywhere; location is decided as needed, on the go.
+
+---
+
+**Conclusion**:  
+Address binding is central to memory management in OS. Compile-time is fastest but rigid. Load-time adds flexibility. Execution-time offers maximum adaptability, enabling features like paging and memory protection in modern OS.
