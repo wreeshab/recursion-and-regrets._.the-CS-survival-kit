@@ -1274,6 +1274,135 @@ C++ supports multiple inheritance **natively** using a comma-separated list of b
 **Conclusion:**  
 C++ provides powerful and flexible multiple inheritance capabilities, but it puts the burden of **ambiguity resolution** on the developer. Techniques like **virtual inheritance** help ensure consistency when dealing with complex inheritance hierarchies.
 
+
+### Q: What is Encapsulation in Object-Oriented Programming?
+
+**Answer:**
+
+Encapsulation is the principle of **wrapping data and the methods that operate on it into a single unit**, typically a class. It is implemented using **access modifiers** to **restrict direct access** to internal details and enforce control through **getter and setter methods**.
+
+---
+
+### ✅ Key Concepts:
+
+- **Combines Data + Methods**: Keeps attributes (data) and behavior (methods) together.
+- **Data Hiding**: Instance variables are kept `private` to prevent external access.
+- **Controlled Access**: Public `getter` and `setter` methods provide controlled access.
+- **Validation**: Setters can enforce rules before modifying internal state.
+- **Simple Interface**: Users interact with the object through a defined and limited interface.
+
+---
+
+### ✅ How Encapsulation is Implemented
+
+- Declare class variables as `private`.
+- Provide public `getter` and `setter` methods to access and modify them.
+- Use access modifiers (`private`, `public`, `protected`) to enforce boundaries.
+- Enforce **data validation** in setters to ensure consistency.
+
+---
+
+### ✅ Advantages of Encapsulation
+
+- **Data Hiding**: Prevents unwanted access to internal state.
+- **Data Integrity**: Ensures only valid data enters the object.
+- **Reusability**: Well-encapsulated code is easier to reuse and adapt.
+- **Security**: Sensitive data is shielded from unauthorized access.
+- **Abstraction**: Hides internal implementation, exposes only relevant behavior.
+
+---
+
+### ✅ Best Practices
+
+- Use `private` for variables.
+- Use `public` methods for controlled access.
+- Validate data in setters before assignment.
+- Expose only necessary information through interfaces.
+
+---
+
+**In essence**, encapsulation merges **data hiding** and **abstraction**—protecting internal state while exposing only essential functionality to the user.
+
+---
+
+### Q: What is Abstraction in Object-Oriented Programming?
+
+**Answer:**
+
+Abstraction is the process of **hiding implementation details** and exposing **only the essential features** of an object to the user. It allows focusing on **what an object does**, rather than **how it does it**.
+
+---
+
+### ✅ Key Characteristics
+
+- Hides **complex internal logic**, exposing only relevant functionality.
+- Promotes **modular and maintainable code**.
+- Helps in **identifying essential characteristics** of an object.
+- Makes changes in implementation **less likely to break dependent code**.
+
+---
+
+### ✅ Java Implementation
+
+| Abstraction Technique | Type | Notes |
+|-----------------------|------|-------|
+| **Abstract Class** | Partial Abstraction | Can contain abstract and concrete methods |
+| **Interface** | Full Abstraction | All methods are implicitly abstract (till Java 7), supports default methods (Java 8+) |
+
+- Abstract classes **can have constructors**, instance variables, and implement interfaces.
+- Abstract classes **cannot be instantiated directly** using `new`.
+- Abstract methods **must be overridden** by subclasses.
+
+---
+
+### ✅ Algorithm to Apply Abstraction
+
+1. Identify common properties/behaviors across related classes.
+2. Define an **abstract class** or **interface** capturing shared contracts.
+3. Declare **abstract methods** without implementation.
+4. Create concrete subclasses and **override** abstract methods.
+5. Use objects of concrete classes in application logic.
+
+---
+
+### ✅ Benefits
+
+- Reduces complexity by **separating concerns**.
+- Increases **code readability and maintainability**.
+- Supports **loose coupling**.
+- Enhances **security** by hiding sensitive/internal details.
+
+---
+
+### ❌ Limitations
+
+- Can **increase complexity** if overused.
+- Adds **layers** that may reduce performance.
+- Makes **debugging** harder in deeply abstracted systems.
+- May reduce **implementation flexibility**.
+
+---
+
+### ✅ Real-World Analogy
+
+Using a **remote control**: You press buttons to control a TV (abstracted actions), but don't need to know the internal wiring or signal processing (implementation).
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Q: What is the Diamond Problem? How is it handled in C++ and Java?
 
 ---
@@ -1401,3 +1530,335 @@ The `sealed` modifier restricts which classes or interfaces can extend or implem
   Example: `super.methodName();`
 
 > This works because the child class inherits the parent method, so an explicit parent object is not required.
+
+## How to Invoke Parent Class Method Without Creating Object of It
+
+In Java, there are two ways to invoke a method from the parent class without creating an explicit object of it:
+
+### ✅ 1. If the Method is `static`  
+- You can directly call the method using the **parent class name**.
+- Syntax: `ParentClass.methodName();`
+
+### ✅ 2. If the Method is `non-static`  
+- Use the `super` keyword from within the child class.
+- This allows access to the parent’s method through inheritance.
+- Syntax: `super.methodName();`
+
+> In both cases, no separate object of the parent class is required because the method is either accessed via the class name (`static`) or through inheritance (`super`).
+
+
+## What is the difference between method overriding and method hiding in Java and C++/C#?
+
+### ✅ Method Overriding:
+- Applies to **instance methods**.
+- Requires **same method signature** in subclass.
+- Enables **runtime polymorphism** (method resolved based on actual object type).
+- Requires the base method to be `virtual` (in C++) or `virtual/abstract/override` (in C#).
+- In Java, instance methods are **virtual by default**.
+- `@Override` annotation is used in Java to indicate overriding.
+- Base class reference pointing to derived class object calls the **overridden method**.
+
+### ✅ Method Hiding:
+- Applies to **static methods**.
+- Method in subclass has **same signature** but is independent.
+- Resolved at **compile-time** based on **reference type**, not object type.
+  - When a static method is called in Java or C#, the compiler determines which version of the method to call based on the type of the reference variable, not the actual object it refers to.
+- In C#, the `new` keyword is used to hide base class methods explicitly.
+- In Java, there's **no keyword** — static methods are hidden implicitly.
+- Method hiding does **not** support polymorphism.
+- Final or private methods cannot be overridden or hidden.
+
+### 🔁 Summary Table:
+
+| Feature                     | Overriding (Instance)        | Hiding (Static)             |
+|----------------------------|------------------------------|-----------------------------|
+| Applies to                 | Instance methods             | Static methods              |
+| Resolution type            | Runtime                      | Compile-time                |
+| Supports polymorphism      | Yes                          | No                          |
+| In Java: keyword           | `@Override` (optional)       | None                        |
+| In C++/C#: keyword         | `virtual` / `override`       | `new`                       |
+| Based on object type       | Yes                          | No                          |
+| Based on reference type    | No                           | Yes                         |
+| Requires matching signature| Yes                          | Yes                         |
+
+
+### Q: What is the difference between Reference Type and Object Type?
+
+**Reference Type:**
+- The **declared type** of a variable.
+- Decides what methods or fields are **accessible** at compile-time.
+- Determines **static method** calls and **method signatures** that can be invoked.
+
+**Object Type:**
+- The **actual class** of the object that the reference points to (created using `new`).
+- Decides which **overridden instance method** is executed at **runtime**.
+- Used during **runtime polymorphism**.
+
+### Example Summary:
+- **Reference type = compile-time check.**
+- **Object type = runtime behavior.**
+
+### Q: Can you call a method that exists only in the child class using a parent class reference?
+
+**Answer:**
+- No, you cannot directly call a method defined only in the child class using a parent class reference.
+- This is because method resolution at compile-time depends on the **reference type**, and the parent class doesn’t know about methods introduced in the child.
+- To access such methods, you must **explicitly cast** the reference to the child class type.
+
+  ((Child) p).childSpecificMethod();
+
+
+### Q: What is Object Slicing in C++?
+
+**Answer:**
+Object slicing occurs when a derived class object is assigned to a base class object **by value**, causing the **extra members of the derived class to be sliced off** (i.e., lost).
+
+---
+
+### 📌 Key Points:
+
+- Happens when **copying** a derived object into a **base class object**, not a pointer or reference.
+- Only the **base part** of the derived object is copied.
+- The derived class’s **additional data members** and overridden methods are not retained.
+- **Polymorphism is lost** in such cases because the object is treated as a base class object.
+
+---
+
+### 🔒 Why It Happens:
+
+- C++ follows value semantics by default.
+- Assigning by value triggers the **base class copy constructor**, which knows nothing about derived members.
+
+---
+
+### ✅ How to Avoid:
+
+- Use **pointers** or **references** to base class instead of copying objects.
+- This preserves the full object and enables polymorphism.
+
+---
+
+### Example Scenario:
+
+> A derived object is passed to a function that takes the base class **by value** — slicing occurs.
+
+### Q: Does overloading work with inheritance?
+
+**Answer:**
+
+Yes, **method overloading works with inheritance**, but the behavior differs between languages:
+
+---
+
+### 🔹 In Java:
+- Overloading is **preserved across inheritance**.
+- A derived class can define new overloaded methods with the same name as in the base class.
+- Base class overloaded methods **remain accessible** unless explicitly overridden.
+
+---
+
+### 🔹 In C++ and C#:
+- A derived class method with the **same name** (regardless of parameters) **hides all base class methods** with that name.
+- To make base class overloads visible in the derived class, you must use a **`using` directive** (C++) or explicitly call them (C#).
+
+---
+
+### 🔑 Summary:
+- Java: Overloads from base class remain accessible.
+- C++/C#: Derived class hides base overloads unless brought into scope explicitly.
+
+### Q: What are Nested Classes in Java? What are its types?
+
+**Answer:**
+
+Nested classes are classes defined within the body of another class. They are used to logically group classes that are only used in one place, increase encapsulation, and improve readability and maintainability.
+
+---
+
+### ✅ Key Characteristics of Nested Classes:
+
+- They are **members** of the enclosing class.
+- Can be declared with any access modifier (`private`, `protected`, `public`, or default).
+- Can **access private members** of the outer class.
+- Outer classes **cannot access** members of the nested class directly.
+- The scope of the nested class is **bounded by its outer class**.
+
+---
+
+### 🔹 Types of Nested Classes:
+
+Nested classes are mainly of two types:
+
+#### 1. **Static Nested Class**
+- Declared with `static` keyword.
+- Acts like a **static member** of the outer class.
+- Can access only **static members** of the outer class.
+- **Does not require** an instance of the outer class for instantiation.
+
+#### 2. **Non-Static Nested Class (Inner Class)**
+Further divided into:
+
+##### a. **Member Inner Class**
+- Declared within the class body (but outside any method).
+- Has access to **all members** of the outer class, including private members.
+- **Tied to an instance** of the outer class.
+
+##### b. **Method-Local Inner Class**
+- Declared **inside a method or block**.
+- Scope is limited to the method in which it is defined.
+- Can access **only final or effectively final** variables from the enclosing method.
+
+##### c. **Anonymous Inner Class**
+- **No name**: declared and instantiated in a single expression.
+- Extends a class or implements an interface.
+- Cannot have constructors or static members.
+- Mostly used for **one-time implementations** (like event handlers, threads, etc).
+
+---
+
+### ✅ Summary Table
+
+| Type                       | Static? | Can Access Outer Instance? | Use Case                              |
+|----------------------------|---------|-----------------------------|----------------------------------------|
+| Static Nested Class        | Yes     | No                          | Utility/helper classes                 |
+| Member Inner Class         | No      | Yes                         | Needs outer class state               |
+| Method-Local Inner Class   | No      | Yes (final/effectively final) | Temporary helper logic inside methods |
+| Anonymous Inner Class      | No      | Yes                         | One-time, quick implementations        |
+
+---
+
+### ✅ Advantages of Nested Classes:
+- **Encapsulation**: Helps hide internal logic.
+- **Grouping**: Logically group related classes.
+- **Callbacks/Event Handlers**: Enables implementation of inline behavior.
+- **Scoped Usage**: Local classes limit visibility and usage.
+
+---
+
+### ✅ Disadvantages:
+- Can make code harder to read if overused.
+- Anonymous classes are less reusable.
+- Deep nesting may reduce clarity.
+
+
+### Q: What are Destructors in C++? Explain their key characteristics and order of invocation.
+
+**Answer:**
+
+A destructor is a special member function in C++ that is invoked automatically when an object goes out of scope or is explicitly deleted. It is used for cleanup activities like releasing memory, closing files, or freeing other system resources.
+
+---
+
+### ✅ Key Characteristics
+
+- Named as the class name prefixed with a tilde `~`.
+- No arguments and no return type.
+- Cannot be overloaded.
+- Cannot be declared `static` or `const`.
+- Automatically invoked during object destruction.
+- Only one destructor per class is allowed.
+
+---
+
+### ✅ When Is a Destructor Called?
+
+- When a local object goes out of scope.
+- When a block or function ends.
+- When `delete` is used on a dynamically allocated object.
+- At the end of the program (for global/static objects).
+
+---
+
+### ✅ Manual Invocation
+
+Though destructors can be called explicitly, it is **strongly discouraged**. Doing so may lead to **undefined behavior**, especially if automatic destruction occurs afterward.
+
+---
+
+### ✅ Why Define a Destructor Manually?
+
+Manual destructors are necessary when:
+- Dynamic memory (`new`) is used.
+- File handles, sockets, or other system resources are acquired.
+- Without one, resource leaks or memory leaks may occur.
+
+---
+
+### ✅ Order of Construction and Destruction
+
+Object lifecycle follows strict rules for constructor and destructor order.
+
+#### ▶️ **Construction Order**
+1. **Base classes** (left-to-right, virtual bases before non-virtual).
+2. **Data members** in order of declaration (not initializer list).
+3. **Derived class constructor** runs last.
+
+#### ▶️ **Destruction Order**
+- **Reverse** of construction:
+  1. Derived class destructor
+  2. Member objects (reverse of declaration order)
+  3. Base class destructors (right-to-left, virtual after non-virtual)
+
+---
+
+### ✅ Special Notes on Inheritance
+
+| Scenario                    | Constructor Order         | Destructor Order         |
+|----------------------------|---------------------------|--------------------------|
+| **Simple Inheritance**     | Base → Derived            | Derived → Base           |
+| **Multiple Inheritance**   | Left Base → Right Base → Derived | Derived → Right Base → Left Base |
+| **Composition**            | Members → Class           | Class → Members          |
+| **Inheritance + Composition** | Base → Members → Derived | Derived → Members → Base |
+
+---
+
+### ✅ Summary
+
+- Destructors automate resource cleanup and prevent leaks.
+- Destruction always follows **LIFO**: last created, first destroyed.
+- Understanding destruction order is crucial for writing safe and efficient C++ programs, especially with dynamic memory and inheritance.
+
+
+
+### Q: What is the difference between Cohesion and Coupling?
+
+**Answer:**
+
+**Cohesion** and **Coupling** are two fundamental concepts in software design that measure the **quality of modularization** in object-oriented systems.
+
+---
+### ✅ Cohesion
+
+Cohesion describes how **well the elements within a single class or module work together** to perform a specific task.
+
+- **High Cohesion** → All the methods and variables are **strongly related** to the core purpose of the class.
+- **Low Cohesion** → The class tries to do **too many unrelated things**, making the code harder to understand, test, and maintain.
+
+**Goal:** Design classes with **high cohesion**, where each class has a **clear and focused responsibility**.
+
+---
+
+### ✅ Coupling
+
+- Refers to the **degree of dependency** between two classes or modules.
+- **Low Coupling** → Classes interact via clear, minimal interfaces.
+- **High Coupling** → Classes are overly dependent on each other's internals.
+
+**Goal:** Aim for **low coupling** to promote flexibility and maintainability.
+
+---
+
+### 🔁 Summary Table
+
+| Feature      | Cohesion                         | Coupling                          |
+|--------------|----------------------------------|-----------------------------------|
+| Definition   | Degree to which elements in a module belong together | Degree of interdependence between modules |
+| Ideal Level  | High                             | Low                               |
+| Indicator    | Focused, single-purpose classes  | Independent, modular classes      |
+| Result       | Better maintainability           | Easier testing and reuse          |
+| Bad Practice | Mixing unrelated logic           | Classes knowing internal details of others |
+
+---
+
+**Rule of Thumb:**  
+✔️ *High Cohesion* + ✔️ *Low Coupling* = ✅ Good Object-Oriented Design
