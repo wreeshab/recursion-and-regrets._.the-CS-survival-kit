@@ -1,0 +1,19 @@
+int maxSum(vector<int>& nums, int k) {
+    int n = nums.size();
+    int sum = 0;
+
+    // Take first k elements from the front initially
+    for (int i = 0; i < k; i++)
+        sum += nums[i];
+
+    int best = sum;
+
+    // Try decreasing one front and adding one back at a time
+    for (int i = 0; i < k; i++) {
+        sum -= nums[k - 1 - i];     // remove from front
+        sum += nums[n - 1 - i];     // add from back
+        best = max(best, sum);
+    }
+
+    return best;
+}
