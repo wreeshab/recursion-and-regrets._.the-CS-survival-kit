@@ -806,6 +806,87 @@ There is **no universally best page size** — it depends on workload, memory si
 ### Key Point  
 Enables efficient **CPU utilization** and a **responsive user experience** through time-sharing or preemption.
 
+### Q. What is the difference between Multiprogramming, Multitasking, and Multiprocessing?
+
+| Feature              | **Multiprogramming**                                     | **Multitasking**                                               | **Multiprocessing**                                      |
+|----------------------|-----------------------------------------------------------|----------------------------------------------------------------|-----------------------------------------------------------|
+| **Goal**             | Maximize CPU utilization                                  | Improve responsiveness and interactivity                       | Improve performance and reliability                       |
+| **Basic Idea**       | Multiple programs in memory; CPU runs one at a time       | CPU switches between tasks rapidly                             | Multiple CPUs execute multiple processes simultaneously   |
+| **Execution**        | Concurrent (not simultaneous)                             | Concurrent and appears simultaneous                            | Truly parallel execution                                  |
+| **CPU Involvement**  | Single CPU                                                | Single CPU (context switching)                                 | Multiple CPUs/cores                                       |
+| **Context Switching**| Occurs when a process waits (e.g., I/O)                   | Frequent, based on time-slicing                                | May or may not require frequent context switching         |
+| **System Type**      | Batch OS                                                  | Time-sharing OS                                                | Symmetric or asymmetric multiprocessing systems           |
+| **Example**          | Running compiler, editor, and assembler in memory         | Listening to music while typing                                | Servers, multicore systems                                |
+
+---
+
+### Summary:
+
+- **Multiprogramming**: Multiple programs are loaded in memory; CPU picks one to execute. Increases CPU utilization by switching on I/O wait.
+- **Multitasking**: OS switches between tasks rapidly to create an illusion of parallelism. Supports interactive use.
+- **Multiprocessing**: Uses more than one processor/core to execute multiple processes in parallel. True parallelism.
+
+### Q. What is the Multilevel Feedback Queue (MLFQ) Scheduling Algorithm?
+
+The **Multilevel Feedback Queue (MLFQ)** is a **CPU scheduling algorithm** that uses **multiple queues** with **different priority levels**, allowing processes to **move between queues** based on their behavior and requirements.
+
+---
+
+### Key Characteristics:
+
+- **Multiple Queues**: Each queue has its own scheduling policy (e.g., Round Robin, FCFS).
+- **Feedback Mechanism**: Processes are moved between queues based on how much CPU time they consume.
+- **Priority-based**: Higher-priority queues are scheduled first.
+- **Aging Supported**: Prevents starvation by promoting long-waiting processes.
+
+---
+
+### Working of MLFQ:
+
+1. **New processes** enter the highest-priority queue (e.g., Queue 0).
+2. If a process **uses too much CPU time**, it is **demoted** to a lower-priority queue.
+3. If a process **yields early** (e.g., for I/O), it may stay or even be promoted.
+4. **Scheduler selects from the highest non-empty queue**, often using **Round Robin** in each queue.
+5. Lower-priority processes get CPU only if all higher queues are empty.
+
+---
+
+### Why it's powerful:
+
+- **Adaptive**: Differentiates between I/O-bound and CPU-bound processes.
+- **Fair**: Prevents starvation via promotion (aging).
+- **Efficient**: Gives quick response to short jobs, gradually demotes longer jobs.
+
+---
+
+### Example Setup:
+
+| Queue | Priority | Time Quantum | Scheduling |
+|-------|----------|--------------|------------|
+| Q0    | Highest  | 8 ms         | Round Robin |
+| Q1    | Medium   | 16 ms        | Round Robin |
+| Q2    | Lowest   | FCFS         | FCFS        |
+
+A process starts in Q0. If it doesn’t finish in 8ms, it's moved to Q1, and so on.
+
+---
+
+### Disadvantages of MLFQ:
+
+- **Complex to implement**: Requires tuning of time quantums, number of queues, and promotion/demotion rules.
+- **Difficult to tune**: Performance heavily depends on workload and chosen parameters.
+- **Risk of starvation**: If not properly aged, lower-priority processes may get starved.
+- **Overhead**: Frequent context switches and queue movements add runtime overhead.
+
+---
+
+### Summary:
+
+- MLFQ is a **dynamic**, **adaptive**, and **priority-based** scheduling algorithm.
+- Improves responsiveness for short tasks and fairness for long ones.
+- Requires careful configuration to avoid complexity and starvation.
+
+
 
 ### Q: What is Caching?
 
